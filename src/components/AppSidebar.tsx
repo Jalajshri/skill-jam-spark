@@ -69,7 +69,7 @@ export function AppSidebar() {
         <div className="flex items-center justify-between">
           {!isCollapsed && (
             <span className="text-lg font-bold">
-              Lingua<span className="text-gradient">Flow</span>
+              Eternity <span className="text-gradient">music</span>
             </span>
           )}
           <button 
