@@ -60,21 +60,21 @@ export function AppSidebar() {
   return (
     <Sidebar 
       className={cn(
-        "border-r border-border bg-background/95 backdrop-blur transition-all duration-300",
-        isCollapsed ? "w-[72px]" : "w-[280px]"
+        "border-r border-sidebar-border bg-sidebar transition-all duration-200",
+        isCollapsed ? "w-[72px]" : "w-[300px]"
       )}
       collapsible="icon"
     >
-      <SidebarHeader className="p-4">
+      <SidebarHeader className="p-4 pb-2">
         <div className="flex items-center justify-between">
           {!isCollapsed && (
-            <span className="text-lg font-bold">
+            <span className="text-xl font-bold tracking-tight">
               Eternity <span className="text-gradient">music</span>
             </span>
           )}
           <button 
             onClick={toggleSidebar}
-            className="w-8 h-8 rounded-full bg-secondary hover:bg-secondary/80 flex items-center justify-center transition-colors"
+            className="w-7 h-7 rounded-full bg-sidebar-accent hover:bg-sidebar-accent/80 flex items-center justify-center transition-colors hover:scale-105"
           >
             {isCollapsed ? (
               <ChevronRight className="w-4 h-4" />
@@ -86,7 +86,7 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="px-2">
-        <ScrollArea className="h-[calc(100vh-140px)]">
+        <ScrollArea className="h-[calc(100vh-230px)]">
           {/* Main Navigation */}
           <SidebarGroup>
             <SidebarGroupContent>
@@ -129,16 +129,17 @@ export function AppSidebar() {
               <SidebarMenu>
                 {learningPaths.map((path) => (
                   <SidebarMenuItem key={path.title}>
-                    <SidebarMenuButton asChild className="h-10">
-                      <button className="flex items-center gap-3 px-3 w-full rounded-lg hover:bg-secondary transition-colors text-left">
+                    <SidebarMenuButton asChild className="h-12">
+                      <button className="flex items-center gap-3 px-2 w-full rounded-md hover:bg-sidebar-accent transition-all duration-150 text-left group">
                         <div className={cn(
-                          "w-8 h-8 rounded-md flex items-center justify-center shrink-0",
-                          path.color
+                          "w-10 h-10 rounded flex items-center justify-center shrink-0 transition-all",
+                          path.color,
+                          "group-hover:shadow-lg"
                         )}>
-                          <span className="text-sm">{path.emoji}</span>
+                          <span className="text-lg">{path.emoji}</span>
                         </div>
                         {!isCollapsed && (
-                          <span className="text-sm truncate">{path.title}</span>
+                          <span className="text-sm font-medium truncate">{path.title}</span>
                         )}
                       </button>
                     </SidebarMenuButton>
@@ -160,16 +161,22 @@ export function AppSidebar() {
                 </span>
               </SidebarGroupLabel>
               <SidebarGroupContent>
-                <SidebarMenu>
+              <SidebarMenu>
                   {recentActivity.map((item) => (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild className="h-14">
-                        <button className="flex items-center gap-3 px-3 w-full rounded-lg hover:bg-secondary transition-colors text-left">
-                          <div className="w-10 h-10 rounded-md gradient-card border border-border flex items-center justify-center shrink-0">
-                            <span className="text-lg">{item.emoji}</span>
+                      <SidebarMenuButton asChild className="h-16">
+                        <button className="flex items-center gap-3 px-2 w-full rounded-md hover:bg-sidebar-accent transition-all duration-150 text-left group relative">
+                          <div className="w-12 h-12 rounded flex items-center justify-center shrink-0 bg-card relative overflow-hidden group-hover:shadow-lg transition-all">
+                            <span className="text-xl">{item.emoji}</span>
+                            {/* Play button overlay */}
+                            <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center shadow-lg translate-y-1 group-hover:translate-y-0 transition-transform">
+                                <span className="text-primary-foreground text-xs">▶</span>
+                              </div>
+                            </div>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">{item.title}</p>
+                            <p className="text-sm font-medium truncate group-hover:text-foreground">{item.title}</p>
                             <p className="text-xs text-muted-foreground truncate">{item.subtitle}</p>
                           </div>
                         </button>
