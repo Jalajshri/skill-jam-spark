@@ -3,16 +3,9 @@ import {
   Search, 
   Library, 
   Plus, 
-  Globe, 
-  Heart,
-  Clock,
-  TrendingUp,
-  BookOpen,
-  Headphones,
-  MessageSquare,
-  Pencil,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Play
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -30,6 +23,7 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { usePlayer, sampleTracks, Track } from "@/contexts/PlayerContext";
 
 const mainNavItems = [
   { title: "Home", url: "/dashboard", icon: Home },
@@ -46,16 +40,17 @@ const learningPaths = [
   { title: "Reading Corner", emoji: "📖", color: "bg-orange-500/20" },
 ];
 
-const recentActivity = [
-  { title: "Spanish Basics", subtitle: "Course • 12 lessons", emoji: "🇪🇸" },
-  { title: "French Verbs", subtitle: "Course • 8 lessons", emoji: "🇫🇷" },
-  { title: "Travel Phrases", subtitle: "Playlist • 24 phrases", emoji: "✈️" },
-  { title: "Business German", subtitle: "Course • 15 lessons", emoji: "🇩🇪" },
+const recentActivity: { title: string; subtitle: string; emoji: string; trackId: string }[] = [
+  { title: "Spanish Basics", subtitle: "Course • 12 lessons", emoji: "🇪🇸", trackId: "1" },
+  { title: "French Verbs", subtitle: "Course • 8 lessons", emoji: "🇫🇷", trackId: "5" },
+  { title: "Travel Phrases", subtitle: "Playlist • 24 phrases", emoji: "✈️", trackId: "6" },
+  { title: "Business German", subtitle: "Course • 15 lessons", emoji: "🇩🇪", trackId: "7" },
 ];
 
 export function AppSidebar() {
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const { play, currentTrack, isPlaying } = usePlayer();
 
   return (
     <Sidebar 
@@ -162,27 +157,44 @@ export function AppSidebar() {
               </SidebarGroupLabel>
               <SidebarGroupContent>
               <SidebarMenu>
-                  {recentActivity.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild className="h-16">
-                        <button className="flex items-center gap-3 px-2 w-full rounded-md hover:bg-sidebar-accent transition-all duration-150 text-left group relative">
-                          <div className="w-12 h-12 rounded flex items-center justify-center shrink-0 bg-card relative overflow-hidden group-hover:shadow-lg transition-all">
-                            <span className="text-xl">{item.emoji}</span>
-                            {/* Play button overlay */}
-                            <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center shadow-lg translate-y-1 group-hover:translate-y-0 transition-transform">
-                                <span className="text-primary-foreground text-xs">▶</span>
+                  {recentActivity.map((item) => {
+                    const track = sampleTracks.find(t => t.id === item.trackId);
+                    const isCurrentTrack = currentTrack?.id === item.trackId;
+                    
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild className="h-16">
+                          <button 
+                            onClick={() => track && play(track)}
+                            className={cn(
+                              "flex items-center gap-3 px-2 w-full rounded-md hover:bg-sidebar-accent transition-all duration-150 text-left group relative",
+                              isCurrentTrack && "bg-sidebar-accent"
+                            )}
+                          >
+                            <div className="w-12 h-12 rounded flex items-center justify-center shrink-0 bg-card relative overflow-hidden group-hover:shadow-lg transition-all">
+                              <span className={cn("text-xl transition-opacity", isCurrentTrack && isPlaying ? "opacity-0" : "group-hover:opacity-0")}>{item.emoji}</span>
+                              {/* Play button overlay */}
+                              <div className={cn(
+                                "absolute inset-0 bg-background/60 transition-opacity flex items-center justify-center",
+                                isCurrentTrack && isPlaying ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                              )}>
+                                <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center shadow-lg">
+                                  <Play className="w-3 h-3 text-primary-foreground fill-current ml-0.5" />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate group-hover:text-foreground">{item.title}</p>
-                            <p className="text-xs text-muted-foreground truncate">{item.subtitle}</p>
-                          </div>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+                            <div className="flex-1 min-w-0">
+                              <p className={cn(
+                                "text-sm font-medium truncate group-hover:text-foreground",
+                                isCurrentTrack && "text-primary"
+                              )}>{item.title}</p>
+                              <p className="text-xs text-muted-foreground truncate">{item.subtitle}</p>
+                            </div>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
